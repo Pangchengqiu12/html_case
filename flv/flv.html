@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>flv.js播放器 demo</title>
+  </head>
+  <style>
+    video {
+      width: 500px;
+      height: 300px;
+    }
+  </style>
+  <body>
+    <video id="videoElement" controls></video>
+
+    <script src="http://bilibili.github.io/flv.js/dist/flv.js"></script>
+
+    <script>
+      if (flvjs.isSupported()) {
+        var videoElement = document.getElementById('videoElement');
+        var flvPlayer = flvjs.createPlayer({
+          type: 'mp4',
+          isLive: true,
+          cors: true,
+          hasVideo: true,
+          hasAudio: true,
+          enableWorker: true,
+          enableStashBuffer: true,
+          stashInitialSize: 128,
+          url: 'http://113.194.84.170:58007/cam/realmonitor/PgFO2jGSA1E7CN4LTOPT5K?subtype=0&streamType=0&token=1743041089_a57c3f94f15d211cb4e30723ac0ef2be7f1e6fc7&mediatype=HLS.m3u8',
+          // Headers: {
+          //   Authorization: 'Basic ' + btoa('hbjrzx:hbjrzx@123'),
+          // },
+        });
+        flvPlayer.attachMediaElement(videoElement);
+        flvPlayer.load();
+        flvPlayer.play();
+        videoElement.addEventListener('pause', function () {
+          flvPlayer.pause();
+          flvPlayer.unload();
+        });
+        videoElement.addEventListener('play', function () {
+          flvPlayer.play();
+          flvPlayer.load();
+        });
+      }
+    </script>
+  </body>
+</html>

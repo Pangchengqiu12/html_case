@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>svg遮罩</title>
+  </head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    svg {
+      position: absolute;
+    }
+    #vrComponent {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      background-color: rgba(0, 0, 0, 0);
+      -webkit-mask-image: url(#mask);
+      mask-image: url(#mask);
+    }
+    .box {
+      width: 100%;
+      height: 100%;
+      background-color: red;
+    }
+  </style>
+  <body>
+    <!-- width="100%" 和 height="100%" : 设置 SVG 占满整个容器 -->
+    <!-- viewBox="0 0 100% 100%" : 定义 SVG 的可视区域 -->
+    <!-- xmlns : 声明 SVG 命名空间 -->
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 100% 100%"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+    <!-- 遮罩定义部分： -->
+    <!-- defs : 用于定义可重用的图形元素 -->
+      <defs>
+        <!-- mask : 创建遮罩效果，maskContentUnits="objectBoundingBox" : 使用相对单位（0-1）来定位遮罩内容 -->
+        <mask id="mask" maskContentUnits="objectBoundingBox">
+          <!-- 主体遮罩 -->
+           <!-- 创建一个矩形，x,y表示矩形的位置，rx和ry表示水平方向的圆角半径和垂直方向的圆角半径，fill:white,表示可见区域。 -->
+          <rect
+            x="0"
+            y="0"
+            width="1"
+            height="1"
+            rx="0"
+            ry="0"
+            fill="white"
+          ></rect>
+          <!-- 创建两个黑色椭圆（黑色部分表示不可见区域） -->
+          <!-- 一个位于顶部（cy="0"），一个位于底部（cy="1"） -->
+          <!-- 椭圆的中心点在水平方向上都是居中的（cx="0.5"） -->
+          <!-- rx 和 ry 控制椭圆的水平和垂直半径 -->
+          <ellipse cx="0.5" cy="0" rx=".57" ry=".14" fill="black"></ellipse>
+          <ellipse cx="0.5" cy="1" rx=".56" ry=".15" fill="black"></ellipse>
+        </mask>
+      </defs>
+    </svg>
+    <div id="vrComponent">
+      <div class="box"></div>
+    </div>
+  </body>
+</html>
