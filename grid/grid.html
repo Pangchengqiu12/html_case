@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 100vw;
+      height: 100vh;
+      background-color: rgb(41, 35, 1);
+      display: grid;
+      grid-template: repeat(auto-fill, 100px) / repeat(auto-fit, 200px);
+      gap: 8px;
+      place-items: start end; /* align-items: start; justify-items: end; 如果省略第二个值，则浏览器认为与第一个值相等。用来控制每个单元格*/
+      place-content: center center; /* align-content: center; justify-content: center; 如果省略第二个值，则浏览器认为与第一个值相等。用来控制整个网格*/
+    }
+    .item1 {
+      grid-column-start: 1;
+      grid-row-start: 2;
+      background-color: brown;
+    }
+    .item2 {
+      grid-row: 2 / span 3;
+      grid-column: 2 / 3;
+      background-color: brown;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <!-- <div class="item1">1</div> -->
+      <div class="item2">2</div>
+    </div>
+  </body>
+</html>
