@@ -16,7 +16,7 @@
       background-color: rgb(41, 35, 1);
       display: grid;
       grid-template: repeat(auto-fill, 100px) / repeat(auto-fit, 200px);
-      gap: 8px;
+      gap: 8px; /* row-gap: 8px; column-gap: 8px; 用来控制每个单元格之间的间距 */
       place-items: start end; /* align-items: start; justify-items: end; 如果省略第二个值，则浏览器认为与第一个值相等。用来控制每个单元格*/
       place-content: center center; /* align-content: center; justify-content: center; 如果省略第二个值，则浏览器认为与第一个值相等。用来控制整个网格*/
     }
