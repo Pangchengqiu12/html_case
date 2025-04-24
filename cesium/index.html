@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <script src="./assets/cesium-1.128/Build/CesiumUnminified/Cesium.js"></script>
+    <link
+      href="./assets/cesium-1.128/Build/CesiumUnminified/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    #cesiumContainer {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      // 禁用Ion服务
+      Cesium.Ion.defaultAccessToken = undefined;
+
+      let viewer;
+      async function initCesium() {
+        viewer = new Cesium.Viewer('cesiumContainer', {
+          animation: false,
+          baseLayerPicker: false,
+          fullscreenButton: false,
+          vrButton: false,
+          geocoder: false,
+          homeButton: false,
+          infoBox: false,
+          sceneModePicker: false,
+          selectionIndicator: false,
+          timeline: false,
+          navigationHelpButton: false,
+          skyBox: false,
+          skyAtmosphere: false,
+          contextOptions: {
+            webgl: {
+              alpha: true,
+              failIfMajorPerformanceCaveat: false,
+            },
+          },
+          imageryProvider: false, //让控制台不报错 默认状态会加载cesium的底图
+        });
+
+        viewer.cesiumWidget.creditContainer.style.display = 'none';
+        // 添加底图
+        const provider = await Cesium.SingleTileImageryProvider.fromUrl(
+          'http://127.0.0.1:8004/blue.jpg'
+        );
+        viewer.scene.imageryLayers.addImageryProvider(provider);
+        viewer.scene.imageryLayers.addImageryProvider(
+          new Cesium.TileMapServiceImageryProvider({
+            url: 'http://127.0.0.1:8004/map/{z}/{x}/{reverseY}.jpg',
+            fileExtension: 'jpg',
+            tilingScheme: new Cesium.GeographicTilingScheme(),
+          })
+          // new Cesium.UrlTemplateImageryProvider({
+          //   url: 'http://192.168.5.228:8004/map/{z}/{x}/{reverseY}.jpg',
+          //   fileExtension: 'jpg',
+          //   tilingScheme: new Cesium.GeographicTilingScheme(),
+          // })
+        );
+      }
+      initCesium();
+    </script>
+  </body>
+</html>
