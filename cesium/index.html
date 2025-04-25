@@ -62,6 +62,8 @@
             url: 'http://127.0.0.1:8004/map/{z}/{x}/{reverseY}.jpg',
             fileExtension: 'jpg',
             tilingScheme: new Cesium.GeographicTilingScheme(),
+            maximumLevel: 7,
+            minimumLevel: 0,
           })
           // new Cesium.UrlTemplateImageryProvider({
           //   url: 'http://192.168.5.228:8004/map/{z}/{x}/{reverseY}.jpg',
@@ -70,7 +72,18 @@
           // })
         );
       }
-      initCesium();
+      async function loadTileset() {
+        if (!viewer) return;
+        const tileset = await Cesium.Cesium3DTileset.fromUrl(
+          'http://127.0.0.1:8004/tilesets/hefei/titleset.json'
+        );
+        viewer.scene.primitives.add(tileset);
+      }
+      async function main() {
+        await initCesium();
+        loadTileset();
+      }
+      main();
     </script>
   </body>
 </html>
