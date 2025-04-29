@@ -30,12 +30,12 @@
       async function initCesium() {
         try {
           viewer = new Cesium.Viewer('cesiumContainer', {
-            terrainProvider: await Cesium.CesiumTerrainProvider.fromUrl(
-            'http://127.0.0.1:8004/广西桂林七星区地形数据/terrain',
-            {
-              requestVertexNormals: true, //开启地形光照
-            }
-          ),
+            // terrainProvider: await Cesium.CesiumTerrainProvider.fromUrl(
+            //   'http://127.0.0.1:8004/广西桂林七星区地形数据/terrain',
+            //   {
+            //     requestVertexNormals: true, //开启地形光照
+            //   }
+            // ),
             animation: false,
             baseLayerPicker: false,
             fullscreenButton: false,
@@ -49,6 +49,7 @@
             navigationHelpButton: false,
             skyBox: false,
             skyAtmosphere: false,
+            shouldAnimate: true,
             contextOptions: {
               webgl: {
                 alpha: true,
@@ -64,20 +65,31 @@
           //   'http://127.0.0.1:8004/blue.jpg'
           // );
           // viewer.scene.imageryLayers.addImageryProvider(provider);
-          viewer.scene.imageryLayers.addImageryProvider(
-            new Cesium.TileMapServiceImageryProvider({
-              url: 'http://127.0.0.1:8004/map/{z}/{x}/{reverseY}.jpg',
-              fileExtension: 'jpg',
-              tilingScheme: new Cesium.GeographicTilingScheme(),
-              maximumLevel: 7,
-              minimumLevel: 0,
-            })
-            // new Cesium.UrlTemplateImageryProvider({
-            //   url: 'http://192.168.5.228:8004/map/{z}/{x}/{reverseY}.jpg',
-            //   fileExtension: 'jpg',
-            //   tilingScheme: new Cesium.GeographicTilingScheme(),
-            // })
-          );
+          // viewer.scene.imageryLayers.addImageryProvider(
+          //   new Cesium.TileMapServiceImageryProvider({
+          //     url: 'http://127.0.0.1:8004/map/{z}/{x}/{reverseY}.jpg',
+          //     fileExtension: 'jpg',
+          //     tilingScheme: new Cesium.GeographicTilingScheme(),
+          //     maximumLevel: 7,
+          //     minimumLevel: 0,
+          //   })
+          //   // new Cesium.UrlTemplateImageryProvider({
+          //   //   url: 'http://192.168.5.228:8004/map/{z}/{x}/{reverseY}.jpg',
+          //   //   fileExtension: 'jpg',
+          //   //   tilingScheme: new Cesium.GeographicTilingScheme(),
+          //   // })
+          // );
+
+          const imgMap = new Cesium.UrlTemplateImageryProvider({
+            url:
+              'https://t{s}.tianditu.gov.cn/' +
+              'DataServer?T=img_w&x={x}&y={y}&l={z}&tk=' +
+              '07e1574cc772de3981196a7240279957',
+            subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
+            tilingScheme: new Cesium.WebMercatorTilingScheme(),
+            maximumLevel: 18,
+          });
+          viewer.imageryLayers.addImageryProvider(imgMap);
         } catch (e) {
           console.log(e, 'cesium terrain');
         }
@@ -91,7 +103,7 @@
       }
       async function main() {
         await initCesium();
-        loadTileset();
+        // loadTileset();
       }
       main();
     </script>
