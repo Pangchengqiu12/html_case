@@ -122,7 +122,7 @@
 
       // 请求JSON数据
       function getMapData() {
-        fetch('./map/zigong.json')
+        fetch('./map/南山风景区边界.json')
           .then((response) => response.json())
           .then((data) => {
             setTexture();
@@ -182,41 +182,54 @@
         map = new THREE.Group();
 
         // geo信息
-        const features = jsondata.features;
-        features.forEach((feature) => {
-          // 单个省份 对象
-          const province = new THREE.Object3D();
-          // 地址
-          province.properties = feature.properties.name;
-          province.isHover = false;
-          // 多个情况
-          if (feature.geometry.type === 'MultiPolygon') {
-            feature.geometry.coordinates.forEach((coordinate) => {
-              coordinate.forEach((rows) => {
-                const line = drawBoundary(rows);
-                const mesh = drawExtrudeMesh(rows);
-                province.add(line);
-                province.add(mesh);
-                provinceMeshList.push(mesh);
-              });
-            });
-          }
+        const features = jsondata;
+        // features.forEach((feature) => {
+        //   // 单个省份 对象
+        //   const province = new THREE.Object3D();
+        //   // 地址
+        //   // province.properties = feature.properties.name;
+        //   province.isHover = false;
+        //   // 多个情况
+        //   if (feature.geometry.type === 'MultiPolygon') {
+        //     feature.geometry.coordinates.forEach((coordinate) => {
+        //       coordinate.forEach((rows) => {
+        //         const line = drawBoundary(rows);
+        //         const mesh = drawExtrudeMesh(rows);
+        //         province.add(line);
+        //         province.add(mesh);
+        //         provinceMeshList.push(mesh);
+        //       });
+        //     });
+        //   }
 
-          // 单个情况
-          if (feature.geometry.type === 'Polygon') {
-            feature.geometry.coordinates.forEach((coordinate) => {
-              const line = drawBoundary(coordinate);
-              const mesh = drawExtrudeMesh(coordinate);
-              province.add(line);
-              province.add(mesh);
-              provinceMeshList.push(mesh);
-            });
-          }
-          const label = drawLabelText(feature);
-          labelList.push({ name: feature.properties.name, label });
-          province.add(label);
-          map.add(province);
-        });
+        //   // 单个情况
+        //   if (feature.geometry.type === 'Polygon') {
+        //     feature.geometry.coordinates.forEach((coordinate) => {
+        //       const line = drawBoundary(coordinate);
+        //       const mesh = drawExtrudeMesh(coordinate);
+        //       province.add(line);
+        //       province.add(mesh);
+        //       provinceMeshList.push(mesh);
+        //     });
+        //   }
+        //   // const label = drawLabelText(feature);
+        //   labelList.push({ name: '南山', label });
+        //   // province.add(label);
+        //   map.add(province);
+        // });
+
+        // 单个情况
+        const province = new THREE.Object3D();
+        if (features.geometries[0].type === 'Polygon') {
+          features.geometries[0].coordinates.forEach((coordinate) => {
+            const line = drawBoundary(coordinate);
+            const mesh = drawExtrudeMesh(coordinate);
+            province.add(line);
+            province.add(mesh);
+            provinceMeshList.push(mesh);
+          });
+        }
+
         map.position.set(0, 1, -1.5);
         map.scale.set(10, 10, 10);
         map.rotation.set(
