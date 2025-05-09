@@ -57,7 +57,7 @@
         0.1,
         200
       );
-      camera.position.set(0, 45, 45);
+      camera.position.set(50, 60, 45);
       // 渲染器
       const renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -122,7 +122,7 @@
 
       // 请求JSON数据
       function getMapData() {
-        fetch('./map/南山风景区边界.json')
+        fetch('./map/南山风景区边界粗略_shape.json')
           .then((response) => response.json())
           .then((data) => {
             setTexture();
@@ -182,12 +182,12 @@
         map = new THREE.Group();
 
         // geo信息
-        const features = jsondata;
+        // const features = jsondata.features;
         // features.forEach((feature) => {
         //   // 单个省份 对象
         //   const province = new THREE.Object3D();
         //   // 地址
-        //   // province.properties = feature.properties.name;
+        //   province.properties = feature.properties.name;
         //   province.isHover = false;
         //   // 多个情况
         //   if (feature.geometry.type === 'MultiPolygon') {
@@ -212,16 +212,16 @@
         //       provinceMeshList.push(mesh);
         //     });
         //   }
-        //   // const label = drawLabelText(feature);
-        //   labelList.push({ name: '南山', label });
-        //   // province.add(label);
+        //   const label = drawLabelText(feature);
+        //   labelList.push({ name: feature.properties.name, label });
+        //   province.add(label);
         //   map.add(province);
         // });
-
-        // 单个情况
+        const feature = jsondata.geometries[0];
         const province = new THREE.Object3D();
-        if (features.geometries[0].type === 'Polygon') {
-          features.geometries[0].coordinates.forEach((coordinate) => {
+        // 单个情况
+        if (feature.type === 'Polygon') {
+          feature.coordinates.forEach((coordinate) => {
             const line = drawBoundary(coordinate);
             const mesh = drawExtrudeMesh(coordinate);
             province.add(line);
@@ -229,7 +229,9 @@
             provinceMeshList.push(mesh);
           });
         }
-
+        //  labelList.push({ name: feature.properties.name, label });
+        //           province.add(label);
+        map.add(province);
         map.position.set(0, 1, -1.5);
         map.scale.set(10, 10, 10);
         map.rotation.set(
@@ -238,7 +240,7 @@
           THREE.MathUtils.degToRad(20)
         );
         scene.add(map);
-        // setMouseEvent();
+        setMouseEvent();
       }
 
       /**
