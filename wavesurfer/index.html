@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    #waveform {
+      width: 1000px;
+      /* height: 400px; */
+    }
+  </style>
+  <body>
+    <div id="waveform">
+      <!-- the waveform will be rendered here -->
+    </div>
+    <p>
+      <label>
+        <input type="checkbox" checked="${loop}" />
+        Loop regions
+      </label>
+
+      <!-- <label style="margin-left: 2em">
+        Zoom: <input type="range" min="10" max="1000" value="10" />
+      </label> -->
+    </p>
+    <script type="module">
+      import WaveSurfer from 'https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/wavesurfer.esm.js';
+      import Spectrogram from 'https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/plugins/spectrogram.esm.js';
+      import RegionsPlugin from 'https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/plugins/regions.esm.js';
+      // Initialize the Regions plugin
+      const regions = RegionsPlugin.create();
+
+      // Create an instance of WaveSurfer
+      const ws = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: 'rgb(200, 0, 200)',
+        progressColor: 'rgb(100, 0, 100)',
+        url: './assets/八哥-7.wav',
+        sampleRate: 44100,
+        plugins: [regions],
+      });
+
+      // Initialize the Spectrogram plugin
+      ws.registerPlugin(
+        Spectrogram.create({
+          labels: false,
+          height: 400,
+          splitChannels: false, //左右声道
+          scale: 'mel', // or 'linear', 'logarithmic', 'bark', 'erb'
+          frequencyMax: 8000,
+          frequencyMin: 0,
+          fftSamples: 1024,
+          labelsBackground: 'rgba(0, 0, 0, 0.1)',
+        })
+      );
+      // 创建区域时为其分配随机颜色
+      const random = (min, max) => Math.random() * (max - min) + min;
+      const randomColor = () =>
+        `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`;
+      // 在特定时间范围内创建一些区域
+      ws.on('decode', () => {
+        // Regions
+        regions.addRegion({
+          start: 0,
+          end: 8,
+          content: 'Resize me',
+          color: randomColor(),
+          drag: false,
+          resize: true,
+        });
+        regions.addRegion({
+          start: 9,
+          end: 10,
+          content: 'Cramped region',
+          color: randomColor(),
+          minLength: 1,
+          maxLength: 10,
+        });
+        regions.addRegion({
+          start: 12,
+          end: 17,
+          content: 'Drag me',
+          color: randomColor(),
+          resize: false,
+        });
+
+        // Markers (zero-length regions)
+        regions.addRegion({
+          start: 19,
+          content: 'Marker',
+          color: randomColor(),
+        });
+        regions.addRegion({
+          start: 20,
+          content: 'Second marker',
+          color: randomColor(),
+        });
+      });
+
+      regions.enableDragSelection({
+        color: 'rgba(255, 0, 0, 0.1)',
+      });
+
+      regions.on('region-updated', (region) => {
+        console.log('Updated region', region);
+      });
+
+      // 点击循环播放区域
+      let loop = true;
+      // 使用复选框切换循环
+      document.querySelector('input[type="checkbox"]').onclick = (e) => {
+        loop = e.target.checked;
+      };
+
+      {
+        let activeRegion = null;
+        regions.on('region-in', (region) => {
+          console.log('region-in', region);
+          activeRegion = region;
+        });
+        regions.on('region-out', (region) => {
+          console.log('region-out', region);
+          if (activeRegion === region) {
+            if (loop) {
+              region.play();
+            } else {
+              activeRegion = null;
+            }
+          }
+        });
+        regions.on('region-clicked', (region, e) => {
+          e.stopPropagation(); // 防止在波形上触发点击
+          activeRegion = region;
+          region.play(true);
+          region.setOptions({ color: randomColor() });
+        });
+        // 当用户点击波形中的任意位置时重置活动区域
+        ws.on('interaction', () => {
+          activeRegion = null;
+        });
+      }
+
+      // 在滑块变化时更新缩放级别
+      ws.once('decode', () => {
+        // document.querySelector('input[type="range"]').oninput = (e) => {
+        //   const minPxPerSec = Number(e.target.value);
+        //   ws.zoom(minPxPerSec);
+        // };
+      });
+    </script>
+  </body>
+</html>
