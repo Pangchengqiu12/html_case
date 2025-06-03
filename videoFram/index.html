@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <title>提取视频第一帧</title>
+  </head>
+  <body>
+    <input type="file" id="videoInput" accept="video/*" />
+    <video id="video" controls></video>
+    <canvas id="canvas" style="display: none"></canvas>
+    <img id="thumbnail" alt="视频第一帧预览" />
+
+    <script>
+      document
+        .getElementById('videoInput')
+        .addEventListener('change', function (event) {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          const video = document.getElementById('video');
+          const canvas = document.getElementById('canvas');
+          const img = document.getElementById('thumbnail');
+
+          const videoUrl = URL.createObjectURL(file);
+          video.src = videoUrl;
+
+          video.addEventListener(
+            'loadeddata',
+            function () {
+              // 必须设置时间点为 0，确保是第一帧
+              video.currentTime = 0;
+            },
+            false
+          );
+
+          video.addEventListener(
+            'seeked',
+            function () {
+              // 视频跳转到指定时间后绘制到 canvas 上
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+              // 将 canvas 转换为图片地址并显示
+              const thumbnailDataUrl = canvas.toDataURL('image/png'); // 可改为 image/jpeg
+              img.src = thumbnailDataUrl;
+            },
+            false
+          );
+        });
+    </script>
+  </body>
+</html>
