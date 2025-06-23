@@ -37,24 +37,24 @@
         container: '#waveform',
         waveColor: 'rgb(200, 0, 200)',
         progressColor: 'rgb(100, 0, 100)',
-        url: './assets/八哥-7.wav',
+        url: './assets/风继续吹.mp3',
         sampleRate: 44100,
         plugins: [regions],
       });
 
       // Initialize the Spectrogram plugin
-      ws.registerPlugin(
-        Spectrogram.create({
-          labels: false,
-          height: 400,
-          splitChannels: false, //左右声道
-          scale: 'mel', // or 'linear', 'logarithmic', 'bark', 'erb'
-          frequencyMax: 8000,
-          frequencyMin: 0,
-          fftSamples: 1024,
-          labelsBackground: 'rgba(0, 0, 0, 0.1)',
-        })
-      );
+      // ws.registerPlugin(
+      //   Spectrogram.create({
+      //     labels: false,
+      //     height: 400,
+      //     splitChannels: false, //左右声道
+      //     scale: 'mel', // or 'linear', 'logarithmic', 'bark', 'erb'
+      //     frequencyMax: 8000,
+      //     frequencyMin: 0,
+      //     fftSamples: 64,
+      //     labelsBackground: 'rgba(0, 0, 0, 0.1)',
+      //   })
+      // );
       // 创建区域时为其分配随机颜色
       const random = (min, max) => Math.random() * (max - min) + min;
       const randomColor = () =>
