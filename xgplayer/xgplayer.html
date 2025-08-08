@@ -7,7 +7,7 @@
       content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui"
     />
     <meta name="referrer" content="no-referrer" />
-    <title>西瓜播放器</title>
+    <title>播放器</title>
     <style type="text/css">
       html,
       body {
@@ -25,7 +25,7 @@
     </style>
     <link
       rel="stylesheet"
-      href="//unpkg.byted-static.com/xgplayer/3.0.10/dist/index.min.css"
+      href="https://unpkg.byted-static.com/xgplayer/3.0.21/dist/index.min.css"
     />
     <script type="text/javascript">
       document.addEventListener('ready', () => {
@@ -40,22 +40,22 @@
   <body>
     <div id="mse"></div>
     <script
-      src="//unpkg.byted-static.com/xgplayer/3.0.10/dist/index.min.js"
+      src="https://unpkg.byted-static.com/xgplayer/3.0.21/dist/index.min.js"
       charset="utf-8"
     ></script>
     <script
-      src="//unpkg.byted-static.com/xgplayer-hls.js/3.0.0-alpha.1/dist/index.min.js"
+      src="https://unpkg.byted-static.com/xgplayer-flv/3.0.21/dist/index.min.js"
       charset="utf-8"
     ></script>
     <script type="text/javascript">
-      new window.Player({
+      let player = new window.Player({
         id: 'mse',
-        url: 'http://113.194.84.170:58007/cam/realmonitor/PgFO2jGSA1E7CN4LTCD1CT?subtype=0&streamType=0&token=1743383367_30749ec83cc4c5a016fd05350ffbf8ed9983d2c4&mediatype=HLS.m3u8',
-        autoplay: true,
         playsinline: true,
+        url: 'http://localhost:8000/live/test.flv',
+        autoplay: true,
         height: window.innerHeight,
         width: window.innerWidth,
-        plugins: [window.HlsJsPlugin],
+        plugins: [window.FlvPlayer],
       });
     </script>
   </body>

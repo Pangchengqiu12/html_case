@@ -19,7 +19,7 @@
       if (flvjs.isSupported()) {
         var videoElement = document.getElementById('videoElement');
         var flvPlayer = flvjs.createPlayer({
-          type: 'mp4',
+          type: 'flv',
           isLive: true,
           cors: true,
           hasVideo: true,
@@ -27,7 +27,7 @@
           enableWorker: true,
           enableStashBuffer: true,
           stashInitialSize: 128,
-          url: 'http://113.194.84.170:58007/cam/realmonitor/PgFO2jGSA1E7CN4LTOPT5K?subtype=0&streamType=0&token=1743041089_a57c3f94f15d211cb4e30723ac0ef2be7f1e6fc7&mediatype=HLS.m3u8',
+          url: 'http://localhost:8000/live/test.flv',
           // Headers: {
           //   Authorization: 'Basic ' + btoa('hbjrzx:hbjrzx@123'),
           // },
