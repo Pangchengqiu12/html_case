@@ -44,7 +44,7 @@
       import gsap from 'gsap';
       import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-      class Basic {
+      class Basic3DPie {
         dom;
         scene;
         camera;
@@ -60,20 +60,20 @@
             { name: 'B', value: 200 },
             { name: 'C', value: 300 },
             { name: 'D', value: 400 },
-            { name: 'E', value: 500 },
-            { name: 'F', value: 600 },
           ],
           outRadius: 300,
           innerRadius: 150, // 改为非0值测试，或设为0
-          depth: 100,
+          depth: 50, //厚度
           gap: 10, // 扇形分离距离
           color: [
-            '#4e9af9',
-            '#001529',
-            '#0e2a47',
-            '#61D6E2',
-            '#82C3FF',
-            '#FFB042',
+            '#3B82F6', // 亮蓝色
+            '#1E40AF', // 深蓝色
+            '#60A5FA', // 天蓝色
+            '#0EA5E9', // 青蓝色
+            '#22D3EE', // 浅蓝色
+            '#06B6D4', // 青色
+            '#38BDF8', // 淡蓝色
+            '#0369A1', // 靛蓝色
           ],
         };
         pieGroup = [];
@@ -118,11 +118,11 @@
           this.renderer.setSize(this.width, this.height);
           this.dom.appendChild(this.renderer.domElement);
 
-          const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+          const ambientLight = new THREE.AmbientLight(0xffffff, 2);
           this.scene.add(ambientLight);
 
-          const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-          directionalLight.position.set(-200, 200, 200);
+          const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+          directionalLight.position.set(-500, 1000, 800); // x为负(左), y为正(上), z为正(前方)
           this.scene.add(directionalLight);
         }
 
@@ -217,6 +217,7 @@
 
           const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
           const material = new THREE.MeshPhongMaterial({
+            // const material = new THREE.MeshBasicMaterial({
             color: new THREE.Color(color),
             opacity: 1,
             transparent: true,
@@ -348,9 +349,9 @@
         showTooltip(event, dataItem) {
           const tooltip = document.getElementById('tooltip');
           tooltip.innerHTML = `
-    <strong>${dataItem.name}</strong><br/>
-    值: ${dataItem.value}
-  `;
+            <strong>${dataItem.name}</strong><br/>
+            值: ${dataItem.value}
+          `;
           tooltip.style.opacity = 1;
           tooltip.style.left = event.clientX + 10 + 'px';
           tooltip.style.top = event.clientY + 10 + 'px';
@@ -376,7 +377,7 @@
       }
 
       const container = document.querySelector('.container');
-      const app = new Basic(container);
+      const app = new Basic3DPie(container);
     </script>
   </body>
 </html>
