@@ -53,14 +53,9 @@
 
         width;
         height;
+        data = [];
 
         options = {
-          data: [
-            { name: 'A', value: 100 },
-            { name: 'B', value: 200 },
-            { name: 'C', value: 300 },
-            { name: 'D', value: 400 },
-          ],
           outRadius: 300,
           innerRadius: 150, // 改为非0值测试，或设为0
           depth: 50, //厚度
@@ -78,12 +73,12 @@
         };
         pieGroup = [];
 
-        constructor(dom) {
+        constructor(dom, options = {}) {
+          this.options = { ...this.options, ...options };
           this.dom = dom;
           this.width = this.dom.clientWidth;
           this.height = this.dom.clientHeight;
           this.initScenes();
-          this.initData();
           this.setControls();
           this.animate();
           window.addEventListener('resize', () => this.onWindowResize());
@@ -126,8 +121,10 @@
           this.scene.add(directionalLight);
         }
 
-        initData() {
-          const data = this.options.data;
+        setData(data) {
+          if (this.data.length > 0) this.removeAllPie();
+
+          this.data = data;
           const total = data.reduce((pre, cur) => pre + cur.value, 0);
           const angle = Math.PI * 2; // 360度
           let currentAngle = -Math.PI / 2; // 从顶部开始绘制
@@ -153,6 +150,13 @@
 
             currentAngle = endAngle; // 更新下一个扇形的起始角度
           });
+        }
+        removeAllPie() {
+          this.pieGroup.forEach((item) => {
+            this.scene.remove(item);
+          });
+          this.pieGroup = [];
+          this.data = [];
         }
 
         createPie(startAngle, endAngle, color, centerAngle) {
@@ -326,7 +330,7 @@
 
               // 获取数据信息
               const index = this.pieGroup.indexOf(object); //获取对象在饼图组中的索引
-              const dataItem = this.options.data[index]; //获取对应的数据项
+              const dataItem = this.data[index]; //获取对应的数据项
               this.showTooltip(event, dataItem); //显示提示信息
             }
           } else {
@@ -377,7 +381,12 @@
       }
 
       const container = document.querySelector('.container');
-      const app = new Basic3DPie(container);
+      const pie = new Basic3DPie(container);
+      pie.setData([
+        { name: 'A', value: 100 },
+        { name: 'B', value: 200 },
+        { name: 'C', value: 300 },
+      ]);
     </script>
   </body>
 </html>
