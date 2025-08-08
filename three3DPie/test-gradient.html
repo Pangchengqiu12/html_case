@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>渐变测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .gradient-demo {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+        }
+        .gradient-1 {
+            background: conic-gradient(from 0deg, #FF6B6B, #FF8E53);
+        }
+        .gradient-2 {
+            background: conic-gradient(from 0deg, #4ECDC4, #44A08D);
+        }
+        .gradient-3 {
+            background: conic-gradient(from 0deg, #45B7D1, #96C93D);
+        }
+        .gradient-4 {
+            background: conic-gradient(from 0deg, #F093FB, #F5576C);
+        }
+        .label {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>渐变颜色测试</h1>
+    <p>这些是我们在3D饼图中使用的渐变颜色：</p>
+    
+    <div>
+        <div class="gradient-demo gradient-1"></div>
+        <div class="label">红色到橙色</div>
+    </div>
+    
+    <div>
+        <div class="gradient-demo gradient-2"></div>
+        <div class="label">青色到绿色</div>
+    </div>
+    
+    <div>
+        <div class="gradient-demo gradient-3"></div>
+        <div class="label">蓝色到绿色</div>
+    </div>
+    
+    <div>
+        <div class="gradient-demo gradient-4"></div>
+        <div class="label">紫色到粉色</div>
+    </div>
+    
+    <p><a href="index.html">返回3D饼图</a></p>
+</body>
+</html>
