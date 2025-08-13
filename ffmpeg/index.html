@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>视频转换</title>
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp" />
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
+    <style>
+      .progress-container {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f0f0f0;
+      }
+      .status {
+        margin: 5px 0;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>视频转换工具</h2>
+    <input type="text" id="videoInput" />
+    <select id="formatSelect">
+      <option value="mp4">MP4</option>
+      <option value="webm">WebM</option>
+    </select>
+    <button id="convertBtn">转换</button>
+
+    <div id="progress" class="progress-container"></div>
+    <video
+      id="outputVideo"
+      controls
+      style="max-width: 100%; margin-top: 20px"
+    ></video>
+
+    <script src="./libs/ffmpeg.min.js"></script>
+    <script>
+      const { createFFmpeg, fetchFile } = FFmpeg;
+
+      // 配置本地路径
+      const ffmpeg = createFFmpeg({
+        log: true,
+        corePath: './libs/ffmpeg-core.js',
+        wasmPath: './libs/ffmpeg-core.wasm',
+        workerPath: './libs/ffmpeg-core.worker.js',
+        logger: ({ type, message }) => {
+          console.log(`[${type}] ${message}`);
+          updateProgress(`[${type}] ${message}`);
+        },
+      });
+
+      function updateProgress(message) {
+        const progressDiv = document.getElementById('progress');
+        const messageElement = document.createElement('div');
+        messageElement.className = 'status';
+        messageElement.textContent = message;
+        progressDiv.appendChild(messageElement);
+        progressDiv.scrollTop = progressDiv.scrollHeight;
+      }
+
+      async function loadFFmpeg() {
+        try {
+          if (!ffmpeg.isLoaded()) {
+            updateProgress('正在加载 FFmpeg...');
+            await ffmpeg.load();
+            updateProgress('✅ FFmpeg 加载完成');
+          } else {
+            updateProgress('✅ FFmpeg 已经加载');
+          }
+        } catch (error) {
+          updateProgress(`❌ FFmpeg 加载失败: ${error.message}`);
+          throw error;
+        }
+      }
+
+      async function convertVideo(inputFile, outputFormat) {
+        try {
+          // 加载 FFmpeg
+          await loadFFmpeg();
+
+          updateProgress('写入输入文件...');
+          // 写入输入文件
+          const inputFileName = `input.${inputFile.name.split('.').pop()}`;
+          ffmpeg.FS('writeFile', inputFileName, await fetchFile(inputFile));
+
+          updateProgress('执行转换...');
+          // 执行转换命令
+          const outputFilename = `output.${outputFormat}`;
+
+          // 使用更适合的编码参数
+          await ffmpeg.run(
+            '-i',
+            inputFileName,
+            '-c:v',
+            'libx264',
+            '-c:a',
+            'aac',
+            '-preset',
+            'ultrafast', // 加快转换速度
+            '-crf',
+            '28', // 降低质量以提高速度
+            '-y', // 覆盖输出文件
+            outputFilename
+          );
+
+          updateProgress('读取输出文件...');
+          // 读取输出文件
+          const data = ffmpeg.FS('readFile', outputFilename);
+
+          updateProgress('创建结果文件...');
+          // 创建下载链接
+          const blob = new Blob([data.buffer], {
+            type: `video/${outputFormat}`,
+          });
+          const url = URL.createObjectURL(blob);
+
+          updateProgress('✅ 转换完成！');
+          return url;
+        } catch (error) {
+          updateProgress(`❌ 转换失败: ${error.message}`);
+          console.error('转换失败:', error);
+          throw error;
+        }
+      }
+
+      // 事件监听
+      document.addEventListener('DOMContentLoaded', () => {
+        document
+          .getElementById('convertBtn')
+          .addEventListener('click', async () => {
+            const fileInput = document.getElementById('videoInput').value;
+            const formatSelect = document.getElementById('formatSelect');
+
+            if (!fileInput) {
+              alert('请选择视频文件');
+              return;
+            }
+
+            const inputFile = fileInput;
+            const outputFormat = formatSelect.value;
+
+            try {
+              // 清空之前的进度信息
+              document.getElementById('progress').innerHTML = '';
+              updateProgress('开始转换...');
+
+              const resultUrl = await convertVideo(inputFile, outputFormat);
+
+              // 显示结果视频
+              const video = document.getElementById('outputVideo');
+              video.src = resultUrl;
+              video.style.display = 'block';
+
+              // 提供下载链接
+              const downloadLink = document.createElement('a');
+              downloadLink.href = resultUrl;
+              downloadLink.download = `converted_video.${outputFormat}`;
+              downloadLink.textContent = '📥 下载转换后的视频';
+              downloadLink.style.display = 'block';
+              downloadLink.style.marginTop = '10px';
+              downloadLink.style.padding = '10px';
+              downloadLink.style.backgroundColor = '#4CAF50';
+              downloadLink.style.color = 'white';
+              downloadLink.style.textDecoration = 'none';
+              downloadLink.style.borderRadius = '4px';
+
+              document.getElementById('progress').appendChild(downloadLink);
+            } catch (error) {
+              updateProgress(`❌ 转换失败: ${error.message}`);
+            }
+          });
+      });
+    </script>
+  </body>
+</html>
