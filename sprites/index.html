@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .container {
+      background-color: #000;
+      --icon-height: 4.1667vw;
+      --icon-width: 4.1667vw;
+      --animation-duration: 2s;
+      --animation-steps: 48;
+      --sprites-height: calc(var(--icon-height) * calc(var(--animation-steps)));
+      width: var(--icon-width);
+      height: var(--icon-height);
+      background: url('./assets/base2.png') no-repeat;
+      background-size: 100% auto; /* 如果是垂直排列的雪碧图 */
+      animation: slideShow var(--animation-duration)
+        steps(var(--animation-steps)) infinite;
+      background-position: 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @keyframes slideShow {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 0 calc(var(--sprites-height) * -1);
+      }
+    }
+  </style>
+  <body>
+    <div class="container"></div>
+  </body>
+</html>

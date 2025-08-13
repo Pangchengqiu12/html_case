@@ -19,8 +19,8 @@
         overflow: hidden;
       }
       .container {
-        width: 100vw;
-        height: 100vh;
+        width: 50vw;
+        height: 500vh;
       }
       .tooltip {
         position: absolute;
@@ -56,10 +56,12 @@
         data = [];
 
         options = {
-          outRadius: 300,
-          innerRadius: 150, // 改为非0值测试，或设为0
+          outRadius: 100,
+          innerRadius: 80, // 改为非0值测试，或设为0
           depth: 50, //厚度
-          gap: 10, // 扇形分离距离
+          gap: 5, // 扇形分离距离
+          lineOutLength: 40, // 第一段向外长度
+          lineSideLength: 80, // 第二段水平长度
           // color: [
           //   '#3B82F6', // 亮蓝色
           //   '#1E40AF', // 深蓝色
@@ -151,7 +153,13 @@
 
             // 计算扇形的中心角度，用于确定分离方向
             const centerAngle = (startAngle + endAngle) / 2;
-            this.createPie(startAngle, endAngle, item.color, centerAngle);
+            this.createPie(
+              startAngle,
+              endAngle,
+              item.color,
+              centerAngle,
+              index
+            );
 
             currentAngle = endAngle; // 更新下一个扇形的起始角度
           });
@@ -176,7 +184,7 @@
             : null;
         }
 
-        createPie(startAngle, endAngle, color, centerAngle) {
+        createPie(startAngle, endAngle, color, centerAngle, index) {
           const shape = new THREE.Shape();
 
           // 根据 innerRadius 是否为 0 来决定绘制方式
@@ -331,6 +339,59 @@
 
           this.scene.add(mesh);
           this.pieGroup.push(mesh);
+
+          //引导线和标签=
+          const midAngle = (startAngle + endAngle) / 2;
+          const edgeRadius =
+            this.options.outRadius + this.options.lineOutLength;
+          const topZ = this.options.depth;
+
+          // 起点（扇形顶部边缘）
+          const startX = Math.cos(midAngle) * this.options.outRadius;
+          const startY = Math.sin(midAngle) * this.options.outRadius;
+
+          // 第一个拐点（向外延伸）
+          const midX = Math.cos(midAngle) * edgeRadius;
+          const midY = Math.sin(midAngle) * edgeRadius;
+
+          // 末端（水平延伸）
+          const endX =
+            midX +
+            (midX >= 0
+              ? this.options.lineSideLength
+              : -this.options.lineSideLength);
+          const endY = midY;
+
+          const points = [
+            new THREE.Vector3(startX, startY, topZ),
+            new THREE.Vector3(midX, midY, topZ),
+            new THREE.Vector3(endX, endY, topZ),
+          ];
+          const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+          const lineMaterial = new THREE.LineBasicMaterial({
+            color: color[0] || color,
+          });
+          const line = new THREE.Line(lineGeometry, lineMaterial);
+          this.scene.add(line);
+
+          // 创建标签（使用 CanvasTexture）
+          const dataItem = this.data[index];
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = 256;
+          canvas.height = 64;
+          ctx.fillStyle = '#fff';
+          ctx.font = '28px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(`${dataItem.name}: ${dataItem.value}`, 128, 32);
+
+          const texture = new THREE.CanvasTexture(canvas);
+          const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+          const sprite = new THREE.Sprite(spriteMaterial);
+          sprite.scale.set(80, 20, 1); // 控制标签大小
+          sprite.position.set(endX, endY + 20, topZ);
+          this.scene.add(sprite);
         }
 
         setControls() {
