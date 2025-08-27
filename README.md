@@ -13,4 +13,5 @@
 |        flv         |                flv.js插件demo                |
 |        grid        |                 grid布局练习                 |
 |      sprites       |                雪碧图动画案列                |
+| BrowserFingerprint |                获取浏览器指纹                |
 
